@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My To-Do</title>
+<link rel="manifest" href="manifest.json">
+<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');</script>
+<style>
+  body{margin:0;font-family:sans-serif;background:#121212;color:#fff;padding:20px}
+  h1{text-align:center}
+  .row{display:flex;gap:8px;margin-bottom:16px}
+  input{flex:1;padding:12px;border-radius:8px;border:none;font-size:16px}
+  button{padding:12px 16px;border:none;border-radius:8px;background:#4caf50;color:#fff;font-size:16px}
+  li{background:#1e1e1e;padding:12px;margin-bottom:8px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;list-style:none}
+  li.done span{text-decoration:line-through;opacity:.5}
+  li button{background:#e53935;padding:6px 10px}
+  ul{padding:0}
+</style>
+</head>
+<body>
+<h1>📝 En To-Do</h1>
+<div class="row">
+  <input id="t" placeholder="Pudhu velai...">
+  <button onclick="add()">Add</button>
+</div>
+<ul id="list"></ul>
+<script>
+let items=JSON.parse(localStorage.getItem('items')||'[]');
+function save(){localStorage.setItem('items',JSON.stringify(items));render()}
+function add(){
+  const v=document.getElementById('t').value.trim();
+  if(!v)return;
+  items.push({text:v,done:false});
+  document.getElementById('t').value='';
+  save();
+}
+function toggle(i){items[i].done=!items[i].done;save()}
+function del(i){items.splice(i,1);save()}
+function render(){
+  document.getElementById('list').innerHTML=items.map((x,i)=>
+    `<li class="${x.done?'done':''}"><span onclick="toggle(${i})">${x.text}</span><button onclick="del(${i})">X</button></li>`
+  ).join('');
+}
+render();
+</script>
+</body>
